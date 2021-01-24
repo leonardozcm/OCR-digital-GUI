@@ -16,22 +16,21 @@ class main_window(QtWidgets.QMainWindow):
         self.save_dir = '/'
         self.video_name = None
         self.outputfile = None
+
         self.ui.video_pushButton.clicked.connect(self.get_file_name)
         self.ui.savepath_pushButton.clicked.connect(self.get_dir_name)
         self.ui.checkout_pushButton.setEnabled(False)
         self.ui.checkout_pushButton.clicked.connect(self.open_output_file)
         self.ui.run_buttom.clicked.connect(self.run)
 
-
     def run(self):
         # detect function
         detect_video(self.video_path)
-        counts=0#todo :make detect_video return data counts
+        counts = 0  # todo :make detect_video return data counts
 
         self.ui.checkout_pushButton.setEnabled(True)
         self.set_total_count(counts)
         self.set_save_path()
-
 
         pass
 
@@ -56,7 +55,6 @@ class main_window(QtWidgets.QMainWindow):
         print(dirName1, "=========")
         self.ui.savepath_browser.append(self.outputfile)
 
-
     # 更新label共提取n个数字
     def set_total_count(self, n):
         self.ui.data_count.setText("{}个数字".format(n))
@@ -67,6 +65,21 @@ class main_window(QtWidgets.QMainWindow):
     def open_output_file(self):
         assert os.path.exists(self.outputfile) is not None, "path not initialized"
         QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(self.outputfile))
+
+    # todo:I'm working on
+    def update_logs(self):
+        while(self):
+            if os.path.exists(self.outputfile):
+                output_line = 10
+                with open(self.outputfile, 'r') as opfile:
+                    lines = opfile.readlines()
+                    log = ""
+                    start = -output_line if len(lines) > output_line else 0
+                    for line in lines[start:-1]:
+                        log += line + "\n"
+                self.ui.log_field.setText(log)
+            else:
+                pass
 
 
 if __name__ == '__main__':
