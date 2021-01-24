@@ -10,5 +10,3 @@ def detect_video(video_path, video_type, csv_path, skipped=10):
         detect_video1(video_path, csv_path, skipped)
     elif video_type==2:
         detect_video2(video_path, csv_path, skipped)
-
-

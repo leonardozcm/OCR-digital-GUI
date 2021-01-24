@@ -1,0 +1,73 @@
+Index: Model/detect.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from .video1 import detect_video1\nfrom .video2 import detect_video2\n    \ndef detect_video(video_path, video_type, csv_path, skipped=10):\n    video_type=video_type  #UI input\n\n    # video_path = '/home/zongyi/Desktop/ocr_lzy/Screen_Recording_20210123-110020_WeChat.mp4'# UI input\n    video_path=video_path\n    if video_type==1:\n        detect_video1(video_path, csv_path, skipped)\n    elif video_type==2:\n        detect_video2(video_path, csv_path, skipped)\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- Model/detect.py	(revision bf62f4af8435c1adea983dc7ff43c6daf3df9ce5)
++++ Model/detect.py	(date 1611495643147)
+@@ -9,6 +9,4 @@
+     if video_type==1:
+         detect_video1(video_path, csv_path, skipped)
+     elif video_type==2:
+-        detect_video2(video_path, csv_path, skipped)
+-
+-
++        detect_video2(video_path, csv_path, skipped)
+\ No newline at end of file
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from View.ui_main import Ui_MainWindow\nfrom Model.detect import detect_video\n\nfrom PyQt5 import QtCore, QtGui, QtWidgets\nfrom PyQt5.QtWidgets import *\nimport sys\nimport os\n\n\nclass main_window(QtWidgets.QMainWindow):\n    def __init__(self):\n        QtWidgets.QMainWindow.__init__(self)\n        self.ui = Ui_MainWindow()\n        self.ui.setupUi(self)\n        self.video_path = '/'\n        self.save_dir = '/'\n        self.video_name = None\n        self.outputfile = None\n\n        self.ui.video_pushButton.clicked.connect(self.get_file_name)\n        self.ui.savepath_pushButton.clicked.connect(self.get_dir_name)\n        self.ui.checkout_pushButton.setEnabled(False)\n        self.ui.checkout_pushButton.clicked.connect(self.open_output_file)\n        self.ui.run_buttom.clicked.connect(self.run)\n\n    def run(self):\n        # detect function\n        self.ui.log_field.setText(\"working on {} ...\".format(self.video_name))\n        counts=0\n        counts = detect_video(self.ui.videopath_browser.toPlainText(), self.ui.unit_comboBox.currentIndex() + 1,\n                              self.ui.savepath_browser.toPlainText(),\n                              skipped=int(self.ui.skipped_browser.toPlainText()))\n\n        self.ui.checkout_pushButton.setEnabled(True)\n        self.set_total_count(counts)\n        self.set_save_path()\n        self.ui.log_field.setText(\"working on {} ... \\ndone!\".format(self.video_name))\n\n\n    def get_file_name(self):\n        # QFileDialog.getOpenFileName()\n        fileName1, filetype = QFileDialog.getOpenFileName(self, 'Open video file',\n                                                          self.video_path)  # 设置文件扩展名过滤,=\n        self.video_path = fileName1\n        try:\n            self.video_name = fileName1.split('/')[-1][:-4][0]\n        except:\n            self.video_name = fileName1\n        print(fileName1, \"=========\", filetype)\n        self.ui.videopath_browser.append(fileName1)\n        self.ui.savepath_browser.append(fileName1[:-4] + \".csv\")\n\n    def get_dir_name(self):\n        # QFileDialog.getOpenFileName()\n        dirName1 = QFileDialog.getExistingDirectory(self, 'Open saving directory',\n                                                    self.save_dir)  # 设置文件扩展名过滤,=\n        self.save_dir = dirName1\n        self.outputfile = os.path.join(dirName1, self.video_name + \".csv\")\n        print(dirName1, \"=========\")\n        self.ui.savepath_browser.append(self.outputfile)\n\n    # 更新label共提取n个数字\n    def set_total_count(self, n):\n        self.ui.data_count.setText(\"{}个数字\".format(n))\n\n    def set_save_path(self):\n        self.ui.saved2path.setText(\"保存至{}\".format(self.outputfile))\n\n    def open_output_file(self):\n        assert os.path.exists(self.outputfile) is not None, \"path not initialized\"\n        QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(self.outputfile))\n\n    # todo:I'm working on\n    def update_logs(self):\n        while (self):\n            if os.path.exists(self.outputfile):\n                output_line = 10\n                with open(self.outputfile, 'r') as opfile:\n                    lines = opfile.readlines()\n                    log = \"\"\n                    start = -output_line if len(lines) > output_line else 0\n                    for line in lines[start:-1]:\n                        log += line + \"\\n\"\n                self.ui.log_field.setText(log)\n            else:\n                pass\n\n\nif __name__ == '__main__':\n    app = QtWidgets.QApplication(sys.argv)\n    window = main_window()\n    window.show()\n    sys.exit(app.exec_())\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main.py	(revision bf62f4af8435c1adea983dc7ff43c6daf3df9ce5)
++++ main.py	(date 1611495502268)
+@@ -12,8 +12,8 @@
+         QtWidgets.QMainWindow.__init__(self)
+         self.ui = Ui_MainWindow()
+         self.ui.setupUi(self)
+-        self.video_path = '/'
+-        self.save_dir = '/'
++        self.video_path = './'
++        self.save_dir = './'
+         self.video_name = None
+         self.outputfile = None
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"JavaScriptSettings\">\n    <option name=\"languageLevel\" value=\"ES6\" />\n  </component>\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.7 (ML) (2)\" project-jdk-type=\"Python SDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision bf62f4af8435c1adea983dc7ff43c6daf3df9ce5)
++++ .idea/misc.xml	(date 1611495610780)
+@@ -3,5 +3,5 @@
+   <component name="JavaScriptSettings">
+     <option name="languageLevel" value="ES6" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (ML) (2)" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (ocr_lzy) (2)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/OCR-digital-GUI.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module type=\"PYTHON_MODULE\" version=\"4\">\n  <component name=\"NewModuleRootManager\">\n    <content url=\"file://$MODULE_DIR$\">\n      <sourceFolder url=\"file://$MODULE_DIR$/test\" isTestSource=\"false\" />\n    </content>\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.7 (ML) (2)\" jdkType=\"Python SDK\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n  </component>\n  <component name=\"TestRunnerService\">\n    <option name=\"PROJECT_TEST_RUNNER\" value=\"pytest\" />\n  </component>\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/OCR-digital-GUI.iml	(revision bf62f4af8435c1adea983dc7ff43c6daf3df9ce5)
++++ .idea/OCR-digital-GUI.iml	(date 1611495610644)
+@@ -4,7 +4,7 @@
+     <content url="file://$MODULE_DIR$">
+       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />
+     </content>
+-    <orderEntry type="jdk" jdkName="Python 3.7 (ML) (2)" jdkType="Python SDK" />
++    <orderEntry type="jdk" jdkName="Python 3.7 (ocr_lzy) (2)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+   <component name="TestRunnerService">
