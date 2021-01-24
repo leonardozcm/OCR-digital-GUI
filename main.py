@@ -12,8 +12,8 @@ class main_window(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.video_path = '/'
-        self.save_dir = '/'
+        self.video_path = './'
+        self.save_dir = './'
         self.video_name = None
         self.outputfile = None
 
