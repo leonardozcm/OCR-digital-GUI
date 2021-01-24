@@ -25,12 +25,16 @@ class main_window(QtWidgets.QMainWindow):
 
     def run(self):
         # detect function
-        detect_video(self.video_path)
-        counts = 0  # todo :make detect_video return data counts
+        self.ui.log_field.setText("working on {} ...".format(self.video_name))
+        counts=0
+        counts = detect_video(self.ui.videopath_browser.toPlainText(), self.ui.unit_comboBox.currentIndex() + 1,
+                              self.ui.savepath_browser.toPlainText(),
+                              skipped=int(self.ui.skipped_browser.toPlainText()))
 
         self.ui.checkout_pushButton.setEnabled(True)
         self.set_total_count(counts)
         self.set_save_path()
+        self.ui.log_field.setText("working on {} ... \ndone!".format(self.video_name))
 
         pass
 
@@ -45,6 +49,7 @@ class main_window(QtWidgets.QMainWindow):
             self.video_name = fileName1
         print(fileName1, "=========", filetype)
         self.ui.videopath_browser.append(fileName1)
+        self.ui.savepath_browser.append(fileName1[:-4] + ".csv")
 
     def get_dir_name(self):
         # QFileDialog.getOpenFileName()
@@ -68,7 +73,7 @@ class main_window(QtWidgets.QMainWindow):
 
     # todo:I'm working on
     def update_logs(self):
-        while(self):
+        while (self):
             if os.path.exists(self.outputfile):
                 output_line = 10
                 with open(self.outputfile, 'r') as opfile:
