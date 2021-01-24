@@ -1,5 +1,5 @@
 from View.ui_main import Ui_MainWindow
-from test.detect import detect_video
+from Model.detect import detect_video
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
@@ -36,7 +36,6 @@ class main_window(QtWidgets.QMainWindow):
         self.set_save_path()
         self.ui.log_field.setText("working on {} ... \ndone!".format(self.video_name))
 
-        pass
 
     def get_file_name(self):
         # QFileDialog.getOpenFileName()
