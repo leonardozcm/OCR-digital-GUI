@@ -22,12 +22,6 @@ def detect_video1(video_path,csv_path,skipped):
     skipped = int(skipped)
     index_dic = defaultdict(list)
     i=0
-    drive_time=""
-    kw=""
-    km_h=""
-    km_1 = ""
-    km_2 = ""
-    percentage=""
 
     f = open(csv_path,'w')  #,encoding='utf-8'
     csv_writer = csv.writer(f)
